@@ -34,6 +34,25 @@ var imageFileFilter = (req, file, cb)=>{
 
 var upload = multer({storage: storage, fileFilter: imageFileFilter});
 
+router.get('/',(req,res,next)=>{
+    res.sendFile(path.join(__dirname, '../','upload.html'))
+})
+
+router.post('/delete',(req,res,next)=>{
+    console.log(req.body.img + 'sakdasd');
+    fs.unlink(path.join(__dirname, '../public/images',req.body.img),()=>{
+        res.json({success:true});
+        var names = fs.readdirSync(dir);
+        for(var i=0; i<setName(); i++){
+            file = names[i];
+            fs.rename(path.join(__dirname, '../public/images',file) ,path.join(__dirname, '../public/images','img'+i+'.png') ,()=>{
+                console.log('renamed');
+            })
+        }
+    });
+});
+
+
 router.post('/', upload.single('imageFile'), (req, res, next)=>{
     res.statusCode = 200;
     res.setHeader('Content-type', 'application/json');
